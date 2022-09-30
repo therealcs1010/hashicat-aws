@@ -11,6 +11,7 @@ provider "aws" {
   region  = var.region
 }
 
+# Virtual private cloud
 resource "aws_vpc" "hashicat" {
   cidr_block           = var.address_space
   enable_dns_hostnames = true
@@ -21,6 +22,7 @@ resource "aws_vpc" "hashicat" {
   }
 }
 
+# Subnet 
 resource "aws_subnet" "hashicat" {
   vpc_id     = aws_vpc.hashicat.id
   cidr_block = var.subnet_prefix
@@ -30,6 +32,7 @@ resource "aws_subnet" "hashicat" {
   }
 }
 
+# Virtual Local Firewall (e.g. Like Windows Firewall)
 resource "aws_security_group" "hashicat" {
   name = "${var.prefix}-security-group"
 
@@ -69,6 +72,7 @@ resource "aws_security_group" "hashicat" {
   }
 }
 
+# Required in order to access Internet
 resource "aws_internet_gateway" "hashicat" {
   vpc_id = aws_vpc.hashicat.id
 
@@ -77,6 +81,7 @@ resource "aws_internet_gateway" "hashicat" {
   }
 }
 
+# Routing table for internet
 resource "aws_route_table" "hashicat" {
   vpc_id = aws_vpc.hashicat.id
 
@@ -90,7 +95,7 @@ resource "aws_route_table_association" "hashicat" {
   subnet_id      = aws_subnet.hashicat.id
   route_table_id = aws_route_table.hashicat.id
 }
-
+# Query parameters with filters
 data "aws_ami" "ubuntu" {
   most_recent = true
 
@@ -108,6 +113,7 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
+# Elastic IP and associating with our instance
 resource "aws_eip" "hashicat" {
   instance = aws_instance.hashicat.id
   vpc      = true
