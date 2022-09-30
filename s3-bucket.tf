@@ -1,5 +1,5 @@
 module "s3_bucket" {
-  source = "sim-yu-jie/terraform-aws-modules/s3-bucket/aws"
+  source  = "app.terraform.io/sim-yu-jie/s3-bucket/aws"
 
   acl    = "private"
   bucket_prefix = var.prefix
